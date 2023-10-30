@@ -122,30 +122,32 @@
     const formRef = ref(regdata);
     
     const router = useRouter();
-
+    // 注册表单提交函数，接受一个表单引用(formRef)作为参数
     const reg = (formRef) => {
+        // 使用表单引用进行表单校验
         formRef.validate((valid) => {
-            //所有校验通过
+            // 如果所有校验通过
             if (valid) {
-                //提交注册信息(@/http/user function:userReg)
+                // 提交注册信息到服务器（通过 userReg 函数实现）
                 userReg(regdata).then(res => { 
-                    
-                    //注册成功后的操作
+                    // 如果注册成功
                     if(res.success == true && res.code == 1){
+                        // 显示成功提示消息
                         ElMessage({message: '注册成功',type: 'success',offset: 100});
-                        //跳转
+                        // 重定向用户到登录页面
                         router.push('/user/login');
                     }else{
+                        // 注册失败时，显示警告消息
                         ElMessage({message: res.msg,type: 'warning',offset: 100});
                     }
                 }).catch(err => {
-                    //注册失败后显示错误信息
+                    // 注册失败后捕获异常并显示错误消息
                     ElMessage({message: err.msg,type: 'error',offset: 100});
                 })
             } else {
-                //部分校验未通过
+                // 如果有部分校验未通过，显示错误消息
                 ElMessage({message: '请检查输入信息',type: 'error',offset: 100});
-                return false;
+                return false;// 防止继续执行提交
             }
         });
     }

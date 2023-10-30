@@ -23,25 +23,30 @@ const router = createRouter({// 内部提供了 history 模式的实现。为了
     routes,
 });
 
+// 路由守卫（beforeEach）用于拦截路由导航，在用户访问不同页面之前执行特定逻辑
 router.beforeEach((to, from, next) => {
+    // 获取用户仓库（store），其中包含了用户信息
     const userStore = useUserStore();
+    // 获取用户的访问令牌（token）
     const token = userStore.user.token;
 
     if (token == '') { 
-        //无token,只允许访问登录和注册页面(暂时)
+        // 如果用户没有访问令牌（token），表示用户未登录
+        // 只允许用户访问登录和注册页面（暂时的限制）
         if (to.path == '/user/login' || to.path == '/user/register') {
-            //登录、注册页面放行
+            // 放行用户前往登录和注册页面
             next();
         }else{
-            //其他页面跳转到登录页
+            // 否则，将用户重定向到登录页
             next('/user/login');
         }
     }else{
+        // 如果用户有访问令牌（token），表示用户已登录
         if(to.path == '/user/login' || to.path == '/user/register'){
-            //登录后，不允许重复登录注册(暂时)
+            // 不允许已登录用户再次访问登录和注册页面（暂时的限制）
             next(from.path);
         }else{
-            //登录后，其他页面放行
+            // 允许已登录用户访问其他页面
             next();
         }
     }

@@ -61,29 +61,34 @@
 
     const formRef = ref(logindata);
     
+    // 登录表单提交函数，接受一个表单引用(formRef)作为参数
     const login = (formRef) => {
+        // 使用表单引用进行表单校验
         formRef.validate((valid) => {
+            // 如果所有校验通过
             if (valid) {
-                //提交登录信息(@/http/user function:userLogin)
+                // 向服务器提交登录信息（通过 userLogin 函数实现）
                 userLogin(logindata).then(res => { 
-                    //登录成功后的操作
+                    // 如果登录成功
                     if(res.success == true && res.code == 1){
-                        //登录成功,存储user状态
+                        // 登录成功后，存储用户状态
                         userStore.setUser(res.data.userinfo);
+                        // 显示成功提示消息
                         ElMessage({message: '登录成功',type: 'success',offset:100});
-                        //跳转
+                        // 重定向用户到个人信息页面
                         router.push('/user/mine');
                     }else{
+                        // 登录失败时，显示警告消息
                         ElMessage({message: res.msg,type: 'warning',offset:100});
                     }
                 }).catch(err => {
-                    //登录失败后显示错误信息
+                    // 登录失败后捕获异常并显示错误消息
                     ElMessage({message: err.msg,type: 'error',offset:100});
                 })
             } else {
-                //部分校验未通过
+                // 如果有部分校验未通过，显示错误消息
                 ElMessage({message: '请检查输入信息',type: 'error',offset: 100});
-                return false;
+                return false;// 防止继续执行提交
             }
         });
     }
